@@ -17,12 +17,13 @@ from django.http import HttpResponse
 from django.urls import path
 
 import settings
-from magsoft_api import views
+from magsoft_api.views import authentications, registration
 
 urlpatterns = [
-    path('login', views.AuthenticationViews.login),
-    path('logout', views.AuthenticationViews.logout),
-    path('whoami', views.AuthenticationViews.whoami),
+    path('login', authentications.AuthenticationViews.login),
+    path('logout', authentications.AuthenticationViews.logout),
+    path('whoami', authentications.AuthenticationViews.whoami),
+    path('register', registration.RegistrationViews.register),
 ]
 
 if(settings.DEBUG):
