@@ -14,8 +14,8 @@ class UserBackend:
             return None
         return user
 
-    def get_user(self, email):
+    def get_user(self, user_id):
         try:
-            return Users.objects.get(email=email)
+            return Users.objects.get(id=user_id)
         except Users.DoesNotExist:
             return None

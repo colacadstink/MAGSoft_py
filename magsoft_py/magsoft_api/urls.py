@@ -17,16 +17,19 @@ from django.http import HttpResponse
 from django.urls import path
 
 import settings
-from magsoft_api.views import authentications, registration
+from magsoft_api.views import authentications, registration, alerts
 
 urlpatterns = [
-    path('login', authentications.AuthenticationViews.login),
-    path('logout', authentications.AuthenticationViews.logout),
-    path('whoami', authentications.AuthenticationViews.whoami),
-    path('register', registration.RegistrationViews.register),
+    path('login', authentications.LoginViews.as_view()),
+    path('logout', authentications.LogoutViews.as_view()),
+    path('whoami', authentications.WhoamiViews.as_view()),
+
+    path('register', registration.RegistrationViews.as_view()),
+
+    path('alerts', alerts.AlertsView.as_view()),
 ]
 
 if(settings.DEBUG):
     def getcsrf(request):
-        return HttpResponse()
+        return HttpResponse(status=204)
     urlpatterns.append(path("getcsrf", getcsrf))

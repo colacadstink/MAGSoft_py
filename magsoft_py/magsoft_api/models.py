@@ -16,19 +16,21 @@ from django.db import models
 
 PHONE_VALIDATOR = RegexValidator(regex=r'^[-+0-9]{10,}$')
 
+
 class Alerts(models.Model):
     id = models.AutoField(primary_key=True)
-    email = models.ForeignKey('Users', models.CASCADE, db_column='email')
+    email = models.ForeignKey('Users', models.CASCADE, to_field='email', db_column='email')
     title = models.CharField(max_length=255)
     text = models.CharField(max_length=5000)
-    location = models.CharField(max_length=255)
+    location = models.CharField(max_length=255, default='')
+
     class Meta:
         db_table = 'alerts'
 
 
 class Badges(models.Model):
     id = models.AutoField(primary_key=True)
-    email = models.ForeignKey('Users', models.DO_NOTHING, db_column='email')
+    email = models.ForeignKey('Users', models.DO_NOTHING, to_field='email', db_column='email')
     zip = models.IntegerField()
     extra = models.SmallIntegerField()
     shirt = models.IntegerField()
@@ -63,7 +65,7 @@ class Passwordreset(models.Model):
 
 class Roominfo(models.Model):
     id = models.AutoField(primary_key=True, db_column='id')
-    email = models.ForeignKey('Users', models.DO_NOTHING, db_column='email')
+    email = models.ForeignKey('Users', models.DO_NOTHING, to_field='email', db_column='email')
     year = models.IntegerField()
     night = models.CharField(max_length=255)
     numnights = models.IntegerField(db_column='numNights')  # Field name made lowercase.
@@ -76,7 +78,7 @@ class Roominfo(models.Model):
 
 class Roommates(models.Model):
     id = models.AutoField(primary_key=True, db_column='id')
-    email = models.ForeignKey('Users', models.DO_NOTHING, db_column='email')
+    email = models.ForeignKey('Users', models.DO_NOTHING, to_field='email', db_column='email')
     year = models.IntegerField()
     wantstoroom = models.IntegerField(db_column='wantsToRoom')  # Field name made lowercase.
     likes = models.CharField(max_length=10000)
@@ -104,7 +106,7 @@ class Settings(models.Model):
 
 class Tab(models.Model):
     tid = models.AutoField(primary_key=True)
-    email = models.ForeignKey('Users', models.DO_NOTHING, db_column='email')
+    email = models.ForeignKey('Users', models.DO_NOTHING, to_field='email', db_column='email')
     amount = models.DecimalField(max_digits=9, decimal_places=2)
     when = models.CharField(max_length=10)
     housecharge = models.IntegerField(db_column='houseCharge')  # Field name made lowercase.

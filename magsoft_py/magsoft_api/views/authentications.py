@@ -1,36 +1,41 @@
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 
-from rest_framework.decorators import api_view
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from rest_framework.utils import json
+from rest_framework.views import APIView
 
+from magsoft_api import CustomAPIException
 from magsoft_api.serializers import WhoAmISerializer
 from magsoft_api.views import auth_required
 
 
-class AuthenticationViews:
-    @api_view(['POST'])
-    def login(request):
-        data = json.loads(request.body)
+class LoginViews(APIView):
+    def post(self, request):
+        if request.user.is_authenticated:
+            raise CustomAPIException(304, "You are already logged in; log out to log in again.")
+
         try:
-            user = authenticate(request, username=data['email'], password=data['password'])
+            user = authenticate(request, username=request.data['email'], password=request.data['password'])
             if user:
                 login(request, user)
                 return HttpResponse(status=204)
             else:
-                return HttpResponse(status=401)
+                raise AuthenticationFailed()
         except KeyError:
-            return HttpResponse(status=400)
+            raise AuthenticationFailed()
 
-    @api_view(['POST'])
+
+class LogoutViews(APIView):
     @auth_required
-    def logout(request):
+    def post(self, request):
         logout(request)
         return HttpResponse(status=204)
 
-    @api_view(['GET'])
+
+class WhoamiViews(APIView):
     @auth_required
-    def whoami(request):
+    def get(self, request):
         whoami = WhoAmISerializer(request.user)
         return Response(whoami.data)

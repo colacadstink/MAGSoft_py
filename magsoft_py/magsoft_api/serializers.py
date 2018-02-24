@@ -13,10 +13,12 @@ class PasswordField(serializers.CharField):
     def to_internal_value(self, obj):
         return pass_hash(obj['email'], obj['password'])
 
+
 class AlertsForUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alerts
         fields = ('id', 'title', 'text', 'location')
+
 
 class WhoAmISerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,8 +32,9 @@ class WhoAmISerializer(serializers.ModelSerializer):
         return Settings.objects.get(key='curYear').value
 
     def get_alerts(self, obj):
-        queryset = Alerts.objects.all().filter(email=obj.email)
+        queryset = Alerts.objects.filter(email=obj.email)
         return AlertsForUserSerializer(queryset, many=True).data
+
 
 class UserSerializer(serializers.ModelSerializer):
     password = PasswordField()
@@ -39,3 +42,11 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
         fields = ('email', 'password', 'first_name', 'last_name', 'phone', 'emergencyname', 'emergencyphone', 'dob')
+
+
+class AlertCreationSerializer(serializers.ModelSerializer):
+    location = serializers.CharField(max_length=255, required=False)
+
+    class Meta:
+        model = Alerts
+        fields = ('email', 'title', 'text', 'location')
