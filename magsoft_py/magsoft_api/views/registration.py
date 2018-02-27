@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.utils import json
 from rest_framework.views import APIView
 
-from magsoft_api.serializers import UserSerializer
+from magsoft_api.serializers.registration import UserSerializer
 
 
 class RegistrationViews(APIView):

@@ -7,7 +7,7 @@ from rest_framework.utils import json
 from rest_framework.views import APIView
 
 from magsoft_api import CustomAPIException
-from magsoft_api.serializers import WhoAmISerializer
+from magsoft_api.serializers.authentication import WhoAmISerializer
 from magsoft_api.views import auth_required
 
 

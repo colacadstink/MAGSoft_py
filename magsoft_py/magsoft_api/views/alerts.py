@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from magsoft_api import CustomAPIException
 from magsoft_api.models import Alerts, Users
-from magsoft_api.serializers import AlertCreationSerializer
+from magsoft_api.serializers.alerts import AlertCreationSerializer
 from magsoft_api.views import auth_required, staff_required
 
 
