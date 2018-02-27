@@ -10,7 +10,7 @@ from magsoft_api.serializers.alerts import AlertCreationSerializer
 from magsoft_api.views import auth_required, staff_required
 
 
-class AlertsView(APIView):
+class AlertsViews(APIView):
     @auth_required
     def delete(self, request):
         if 'id' not in request.query_params:

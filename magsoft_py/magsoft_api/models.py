@@ -59,10 +59,10 @@ class Badges(models.Model):
     zip = models.IntegerField()
     extra = models.SmallIntegerField()
     shirt = models.IntegerField()
-    badgename = models.CharField(db_column='badgeName', max_length=255)  # Field name made lowercase.
-    spam = models.IntegerField()
-    badgeadded = models.IntegerField(db_column='badgeAdded')  # Field name made lowercase.
-    badgedata = models.CharField(db_column='badgeData', max_length=255)  # Field name made lowercase.
+    badge_name = models.CharField(db_column='badgeName', max_length=255)  # Field name made lowercase.
+    spam = models.BooleanField()
+    badge_added = models.BooleanField(db_column='badgeAdded')  # Field name made lowercase.
+    badge_data = models.CharField(db_column='badgeData', max_length=255)  # Field name made lowercase.
     year = models.SmallIntegerField()
 
     class Meta:

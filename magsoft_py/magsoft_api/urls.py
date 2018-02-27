@@ -17,7 +17,7 @@ from django.http import HttpResponse
 from django.urls import path
 
 import settings
-from magsoft_api.views import authentications, registration, alerts
+from magsoft_api.views import authentications, registration, alerts, badges
 
 urlpatterns = [
     path('login', authentications.LoginViews.as_view()),
@@ -26,7 +26,8 @@ urlpatterns = [
 
     path('register', registration.RegistrationViews.as_view()),
 
-    path('alerts', alerts.AlertsView.as_view()),
+    path('alerts', alerts.AlertsViews.as_view()),
+    path('badges', badges.BadgesViews.as_view()),
 ]
 
 if(settings.DEBUG):
