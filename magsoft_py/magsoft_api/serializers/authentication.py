@@ -18,7 +18,7 @@ class WhoAmISerializer(serializers.ModelSerializer):
     cur_year = serializers.SerializerMethodField()
 
     def get_cur_year(self, obj):
-        return Settings.objects.get(key='curYear').value
+        return Settings['curYear']
 
     def get_alerts(self, obj):
         queryset = Alerts.objects.filter(email=obj.email)

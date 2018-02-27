@@ -9,12 +9,37 @@ from datetime import timedelta, datetime
 
 from django.contrib import auth
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.core.validators import RegexValidator
 from django.db import models
-
+from django.db.models.base import ModelBase
 
 PHONE_VALIDATOR = RegexValidator(regex=r'^[-+0-9]{10,}$')
+
+
+class KeyValueModel(ModelBase):
+    def __len__(cls):
+        return cls.objects.count()
+
+    def __getitem__(cls, key):
+        try:
+            return cls.objects.get(key=key).value
+        except ObjectDoesNotExist:
+            raise KeyError(key)
+
+    def __setitem__(cls, key, value):
+        cls.objects.update_or_create(key=key, value=value)
+
+    def __delitem__(cls, key):
+        count = cls.objects.filter(key=key).delete()[0]
+        if count != 1:
+            raise KeyError(key)
+
+    def __iter__(cls):
+        return cls.objects.all()
+
+    def __contains__(cls, key):
+        return cls.objects.filter(key=key).count() == 1
 
 
 class Alerts(models.Model):
@@ -95,7 +120,7 @@ class Roommates(models.Model):
         unique_together = (('email', 'year'),)
 
 
-class Settings(models.Model):
+class Settings(models.Model, metaclass=KeyValueModel):
     key = models.CharField(primary_key=True, max_length=255)
     value = models.TextField()
     comment = models.CharField(max_length=255)

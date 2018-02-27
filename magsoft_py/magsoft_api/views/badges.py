@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 
-from magsoft_api.models import Badges, Users
+from magsoft_api.models import Badges, Users, Settings
 
 from magsoft_api.views import auth_required
 
@@ -13,7 +13,8 @@ class BadgesViews(APIView):
             user_id = request.query_params['id']
             email = Users.objects.get(id=user_id).email
 
-        myBadges = Badges.objects.filter(email=email)
+        my_badges = Badges.objects.filter(email=email)
+        badge_this_year = my_badges.filter(year=Settings['curYear'])
         #try and filter this year
         #if fail get last year
         #if fail get blank
