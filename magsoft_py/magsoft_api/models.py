@@ -8,7 +8,7 @@
 from datetime import timedelta, datetime
 
 from django.contrib import auth
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, UserManager
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.core.validators import RegexValidator
 from django.db import models
@@ -61,8 +61,8 @@ class Badges(models.Model):
     shirt = models.IntegerField()
     badge_name = models.CharField(db_column='badgeName', max_length=255)  # Field name made lowercase.
     spam = models.BooleanField()
-    badge_added = models.BooleanField(db_column='badgeAdded')  # Field name made lowercase.
-    badge_data = models.CharField(db_column='badgeData', max_length=255)  # Field name made lowercase.
+    badge_added = models.BooleanField(db_column='badgeAdded', default=False)  # Field name made lowercase.
+    badge_data = models.CharField(db_column='badgeData', max_length=255, blank=True, default='')  # Field name made lowercase.
     year = models.SmallIntegerField()
 
     class Meta:
@@ -70,9 +70,27 @@ class Badges(models.Model):
         unique_together = (('email', 'year'),)
 
 
+class BadgeExtras(models.Model):
+    id = models.AutoField(primary_key=True)
+    text = models.CharField(max_length=255)
+    cost = models.SmallIntegerField()
+    has_shirt = models.BooleanField()
+    has_name = models.BooleanField()
+
+    def __str__(self):
+        return self.text
+
+    class Meta:
+        db_table = 'badgeExtras'
+        ordering = ['cost']
+
+
 class Canroompreauth(models.Model):
     id = models.AutoField(primary_key=True, db_column='id')
     email = models.CharField(unique=True, max_length=255)
+
+    def __str__(self):
+        return self.email
 
     class Meta:
         db_table = 'canRoomPreAuth'
@@ -105,13 +123,13 @@ class Roommates(models.Model):
     id = models.AutoField(primary_key=True, db_column='id')
     email = models.ForeignKey('Users', models.DO_NOTHING, to_field='email', db_column='email')
     year = models.IntegerField()
-    wantstoroom = models.IntegerField(db_column='wantsToRoom')  # Field name made lowercase.
+    wantstoroom = models.BooleanField(db_column='wantsToRoom')  # Field name made lowercase.
     likes = models.CharField(max_length=10000)
     dislikes = models.CharField(max_length=10000)
     nights = models.CharField(max_length=3)
     smallroom = models.CharField(db_column='smallRoom', max_length=8)  # Field name made lowercase.
     atrium = models.CharField(max_length=8)
-    parties = models.IntegerField()
+    parties = models.BooleanField()
     allergies = models.CharField(max_length=1000)
     comments = models.CharField(max_length=10000)
 
@@ -125,6 +143,9 @@ class Settings(models.Model, metaclass=KeyValueModel):
     value = models.TextField()
     comment = models.CharField(max_length=255)
 
+    def __str__(self):
+        return '"%s": "%s" (%s)'%(self.key, self.value, self.comment)
+
     class Meta:
         db_table = 'settings'
 
@@ -134,8 +155,9 @@ class Tab(models.Model):
     email = models.ForeignKey('Users', models.DO_NOTHING, to_field='email', db_column='email')
     amount = models.DecimalField(max_digits=9, decimal_places=2)
     when = models.CharField(max_length=10)
-    housecharge = models.IntegerField(db_column='houseCharge')  # Field name made lowercase.
+    housecharge = models.BooleanField(db_column='houseCharge')  # Field name made lowercase.
     notes = models.CharField(max_length=4095)
+    link = models.CharField(max_length=255, blank=True, default='')
 
     class Meta:
         db_table = 'tab'
@@ -161,6 +183,8 @@ class Users(models.Model):
     is_active = True
     is_anonymous = False
     is_authenticated = True
+
+    objects = UserManager()
 
     def clean(self):
         if self.phone==self.emergencyphone:
@@ -191,6 +215,9 @@ class Users(models.Model):
 
     def has_perm(self, perm, obj=None):
         return self.is_staff
+
+    def __str__(self):
+        return '%s %s (%s)'%(self.first_name, self.last_name, self.email)
 
     class Meta:
         db_table = 'users'

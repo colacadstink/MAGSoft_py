@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ParseError
+from rest_framework.response import Response
 from rest_framework.utils import json
 from rest_framework.views import APIView
 
@@ -44,6 +45,6 @@ class AlertsViews(APIView):
             if alert.is_valid():
                 alert.create(alert.validated_data)
             else:
-                return HttpResponse(json.dumps(alert.errors), content_type='application/json', status=400)
+                return Response(alert.errors, status=400)
 
-        return HttpResponse(status=204)
+        return Response({'created': len(email_list)})
